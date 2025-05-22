@@ -154,6 +154,33 @@ function rendezTermekListaTeszt() {
     "Hiba: ár szerint csökkenő rendezés nem működik!"
   );
   console.log("rendezTermekListaTeszt() lefutott");
-
 }
 rendezTermekListaTeszt();
+
+function szuresTermekListaTeszt() {
+  /* szuresTermekLista(keresesoKifejezes): Ellenőrizd,
+     hogy a keresési kifejezés alapján helyesen szűri-e a termékeket. */
+  const modell = new Model();
+  const lista = modell.getTermekLista();
+  let szurt = modell.szuresTermekLista("");
+  console.assert(
+    szurt.length === lista.length,
+    "Hiba: üres keresésre az összes terméket vissza kellett volna adnia!"
+  );
+  // 2. Teszt: Létező részlet keresése az első termék nevéből
+  const keresettSzo = lista[0].nev.slice(0, 3); // pl. "Ter"
+  szurt = modell.szuresTermekLista(keresettSzo);
+  console.assert(
+    szurt.some((t) => t.id === lista[0].id),
+    `Hiba: '${keresettSzo}' részlet alapján nem találta meg a megfelelő terméket!`
+  );
+  // 3. Teszt: Nem létező szó
+  szurt = modell.szuresTermekLista("xyzw123");
+  console.assert(
+    szurt.length === 0,
+    "Hiba: nem létező keresőkifejezésre üres listát kellett volna adnia!"
+  );
+  console.log("szuresTermekListaTeszt() lefutott");
+}
+
+szuresTermekListaTeszt();
