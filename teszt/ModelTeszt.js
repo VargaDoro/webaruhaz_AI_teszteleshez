@@ -93,7 +93,7 @@ function increaseQuantityTeszt() {
   );
   console.log("increaseQuantityTeszt() lefutott");
 }
-increaseQuantityTeszt()
+increaseQuantityTeszt();
 
 function decreaseQuantityTeszt() {
   const modell = new Model();
@@ -104,8 +104,8 @@ function decreaseQuantityTeszt() {
     kep: "./kepek/placeholder.jpg",
     leiras: "Ez egy példa termék leírása.",
   };
-  modell.addKosar(termek); 
-  modell.addKosar(termek); 
+  modell.addKosar(termek);
+  modell.addKosar(termek);
   modell.decreaseQuantity(termek.id);
   const kosar = modell.getKosarLista();
   console.assert(
@@ -123,5 +123,37 @@ function decreaseQuantityTeszt() {
   );
   console.log("decreaseQuantityTeszt() lefutott");
 }
+decreaseQuantityTeszt();
 
-decreaseQuantityTeszt()
+function rendezTermekListaTeszt() {
+  /* rendezTermekLista(irany): Ellenőrizd,
+  hogy a terméklista helyesen rendeződik-e a megadott irány szerint. */
+  const modell = new Model();
+  modell.rendezTermekLista("nevSzerintNovevo");
+  let lista = modell.getTermekLista();
+  console.assert(
+    lista[0].nev === "Termék 1" && lista[1].nev === "Termék 2",
+    "Hiba: név szerint növekvő rendezés nem működik!"
+  );
+  modell.rendezTermekLista("nevSzerintCsokkeno");
+  lista = modell.getTermekLista();
+  console.assert(
+    lista[0].nev === "Termék 4" && lista[1].nev === "Termék 3",
+    "Hiba: név szerint csökkenő rendezés nem működik!"
+  );
+  modell.rendezTermekLista("arSzerintNovevo");
+  lista = modell.getTermekLista();
+  console.assert(
+    lista[0].ar === 1000 && lista[1].ar === 1300,
+    "Hiba: ár szerint növekvő rendezés nem működik!"
+  );
+  modell.rendezTermekLista("arSzerintCsokkeno");
+  lista = modell.getTermekLista();
+  console.assert(
+    lista[0].ar === 2000 && lista[1].ar === 1500,
+    "Hiba: ár szerint csökkenő rendezés nem működik!"
+  );
+  console.log("rendezTermekListaTeszt() lefutott");
+
+}
+rendezTermekListaTeszt();
