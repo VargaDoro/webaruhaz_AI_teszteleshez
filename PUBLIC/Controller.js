@@ -23,7 +23,7 @@ class Controller {
     window.addEventListener("szures", (event) => {
       const { keresesoKifejezes } = event.detail;
       const szurtLista = this.model.szuresTermekLista(keresesoKifejezes);
-      this.initTermekek(szurtLista);
+      this.termekek.init(szurtLista);
     });
 
     this.kosarDBElem = document.querySelector("#kosarDb");
