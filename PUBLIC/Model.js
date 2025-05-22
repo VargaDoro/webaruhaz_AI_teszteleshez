@@ -16,7 +16,7 @@ getKosarLista() {
     } else {
       this.#kosarLista.push({ ...termek, mennyiseg: 1 });
     }
-    console.log(this.#kosarLista);
+    //console.log(this.#kosarLista);
   }
   getTermekLista() {
     return this.#termekLista;
