@@ -1,0 +1,8 @@
+A window.addEventListener("kosarbaTesz", ...) többször fut le.
+
+Minden új Controller példány új addEventListener-t hoz létre.
+
+Ez nem törli a korábban regisztráltakat.
+
+Így a kosárba tétel többször lefut egy kattintásra.
+

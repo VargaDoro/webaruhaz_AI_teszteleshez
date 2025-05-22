@@ -1,13 +1,19 @@
 import Kosar from "./Kosar.js";
 import Termekek from "./Termekek.js";
+//ez+
+let eventListenersRegistered = false;
 
 class Controller {
   constructor(szuloElem, oldal, modell) {
     this.model = modell;
     this.szuloElem = szuloElem;
     oldal === "kosar" ? this.initKosar() : this.initTermekek();
-    // new Termekek(szuloElem, this.model.getTermekLista());
-    this.initEventListeners();
+    //ez+
+    if (!eventListenersRegistered) {
+      this.initEventListeners();
+      eventListenersRegistered = true;
+    }
+
     this.kosarDBElem = document.querySelector("#kosarDb");
     this.kosarDbKiir();
   }
@@ -17,21 +23,29 @@ class Controller {
   }
   initKosar() {
     const kosarLista = this.model.getKosarLista();
-    console.log(kosarLista);
-    this.kosar = new Kosar(kosarLista, this.szuloElem);
-    console.log(this.kosar);
+    // Ha már van kosár példány, csak frissítjük
+    if (this.kosar) {
+      this.kosar.megjelenit(kosarLista);
+    } else {
+      this.kosar = new Kosar(kosarLista, this.szuloElem);
+    }
+    this.kosarDbKiir();
   }
   initTermekek(lista = null) {
     // Megjelenít egy animált gif karikát a terméklista frissítése előtt
     const loadingSpinner = document.createElement("div");
-    loadingSpinner.innerHTML = '<img src="./kepek/loading.gif" alt="Betöltés..." style="display: block; margin: 0 auto;">';
+    loadingSpinner.innerHTML =
+      '<img src="./kepek/loading.gif" alt="Betöltés..." style="display: block; margin: 0 auto;">';
     this.szuloElem.innerHTML = ""; // Törli a meglévő tartalmat
     this.szuloElem.appendChild(loadingSpinner);
 
     // Frissíti a terméklistát
     setTimeout(() => {
-        this.termekek = new Termekek(this.szuloElem, lista || this.model.getTermekLista());
-        loadingSpinner.remove(); // Eltávolítja az animált gif karikát
+      this.termekek = new Termekek(
+        this.szuloElem,
+        lista || this.model.getTermekLista()
+      );
+      loadingSpinner.remove(); // Eltávolítja az animált gif karikát
     }, 300); // Szimulált késleltetés a jobb felhasználói élmény érdekében
   }
   initEventListeners() {
@@ -46,39 +60,34 @@ class Controller {
       }
     });
 
+    window.addEventListener("novel", (event) => {
+      const id = event.detail;
+      this.model.increaseQuantity(id);
+      this.initKosar(); // új hívás
+    });
+    
+    window.addEventListener("csokkent", (event) => {
+      const id = event.detail;
+      this.model.decreaseQuantity(id);
+      this.initKosar();
+    });
+    
     window.addEventListener("torles", (event) => {
       const id = event.detail;
       this.model.removeKosarItem(id);
-      this.kosar.megjelenit(this.model.getKosarLista());
-      this.kosarDbKiir(); // Frissíti a kosár darabszámát
-    });
-
-    window.addEventListener("novel", (event) => {
-      const  id  = event.detail;
-      console.log(event.detail);
-      this.model.increaseQuantity(id);
-      this.kosar.megjelenit(this.model.getKosarLista());
-      this.kosarDbKiir();
-    });
-
-    window.addEventListener("csokkent", (event) => {
-      const  id  = event.detail;
-      this.model.decreaseQuantity(id);
-      console.log(this.kosar);
-      this.kosar.megjelenit(this.model.getKosarLista());
-      this.kosarDbKiir();
+      this.initKosar();
     });
 
     window.addEventListener("rendezes", (event) => {
       const { irany } = event.detail;
       this.model.rendezTermekLista(irany);
-       this.termekek.init(this.model.getTermekLista());
+      this.termekek.init(this.model.getTermekLista());
     });
 
     window.addEventListener("szures", (event) => {
       const { keresesoKifejezes } = event.detail;
       const szurtLista = this.model.szuresTermekLista(keresesoKifejezes);
-     this.termekek.init(szurtLista);
+      this.termekek.init(szurtLista);
     });
   }
 }

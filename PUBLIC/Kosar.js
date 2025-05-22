@@ -8,6 +8,7 @@ class Kosar {
   }
 
   megjelenit(lista) {
+    this.#szuloElem.innerHTML = "";
     this.#lista = lista || this.#lista;
     console.log(this.#lista);
     this.#szuloElem.innerHTML = "";
@@ -34,11 +35,17 @@ class Kosar {
         <td>${termek.nev}</td>
         <td>${termek.ar} Ft</td>
         <td>
-          <button class="btn btn-sm btn-secondary csokkent" data-id="${termek.id}">-</button>
+          <button class="btn btn-sm btn-secondary csokkent" data-id="${
+            termek.id
+          }">-</button>
           ${termek.mennyiseg || 1}
-          <button class="btn btn-sm btn-secondary novel" data-id="${termek.id}">+</button>
+          <button class="btn btn-sm btn-secondary novel" data-id="${
+            termek.id
+          }">+</button>
         </td>
-        <td><button class="btn btn-danger btn-sm torles" data-id="${termek.id}">Törlés</button></td>
+        <td><button class="btn btn-danger btn-sm torles" data-id="${
+          termek.id
+        }">Törlés</button></td>
       `;
       tbody.appendChild(row);
     });
@@ -51,7 +58,7 @@ class Kosar {
   bindEventListeners() {
     this.#szuloElem.querySelectorAll(".novel").forEach((button) => {
       console.log(button.dataset.id);
-      button.addEventListener("click", () => {        
+      button.addEventListener("click", () => {
         const event = new CustomEvent("novel", { detail: button.dataset.id });
         window.dispatchEvent(event);
       });
@@ -59,7 +66,9 @@ class Kosar {
 
     this.#szuloElem.querySelectorAll(".csokkent").forEach((button) => {
       button.addEventListener("click", () => {
-        const event = new CustomEvent("csokkent", { detail: button.dataset.id });
+        const event = new CustomEvent("csokkent", {
+          detail: button.dataset.id,
+        });
         window.dispatchEvent(event);
       });
     });
