@@ -13,6 +13,18 @@ class Controller {
       this.initEventListeners();
       eventListenersRegistered = true;
     }
+    //atraktam konstruktorba a szures és rendezést mivel azt minden elemre akarom használni nemcsak egysze
+    window.addEventListener("rendezes", (event) => {
+      const { irany } = event.detail;
+      this.model.rendezTermekLista(irany);
+      this.termekek.init(this.model.getTermekLista());
+    });
+
+    window.addEventListener("szures", (event) => {
+      const { keresesoKifejezes } = event.detail;
+      const szurtLista = this.model.szuresTermekLista(keresesoKifejezes);
+      this.initTermekek(szurtLista);
+    });
 
     this.kosarDBElem = document.querySelector("#kosarDb");
     this.kosarDbKiir();
@@ -59,35 +71,23 @@ class Controller {
         console.error("Termék nem található:", id);
       }
     });
-
+    
     window.addEventListener("novel", (event) => {
       const id = event.detail;
       this.model.increaseQuantity(id);
       this.initKosar(); // új hívás
     });
-    
+
     window.addEventListener("csokkent", (event) => {
       const id = event.detail;
       this.model.decreaseQuantity(id);
       this.initKosar();
     });
-    
+
     window.addEventListener("torles", (event) => {
       const id = event.detail;
       this.model.removeKosarItem(id);
       this.initKosar();
-    });
-
-    window.addEventListener("rendezes", (event) => {
-      const { irany } = event.detail;
-      this.model.rendezTermekLista(irany);
-      this.termekek.init(this.model.getTermekLista());
-    });
-
-    window.addEventListener("szures", (event) => {
-      const { keresesoKifejezes } = event.detail;
-      const szurtLista = this.model.szuresTermekLista(keresesoKifejezes);
-      this.termekek.init(szurtLista);
     });
   }
 }

@@ -1,8 +1,99 @@
-A window.addEventListener("kosarbaTesz", ...) többször fut le.
+Ha ahárhányszor rányomok a termékre akkor mindig annyival többet ad hozzá a kosárba mennyiségnek 
+-A window.addEventListener("kosarbaTesz", ...) többször fut le.
+-Minden új Controller példány új addEventListener-t hoz létre.
+-Ez nem törli a korábban regisztráltakat.
+-Így a kosárba tétel többször lefut egy kattintásra.
+*****************************************************************
+// Controller.js
+let eventListenersRegistered = false;
 
-Minden új Controller példány új addEventListener-t hoz létre.
+class Controller {
+  constructor(szuloElem, oldal, modell) {
+    this.model = modell;
+    this.szuloElem = szuloElem;
+    oldal === "kosar" ? this.initKosar() : this.initTermekek();
 
-Ez nem törli a korábban regisztráltakat.
+    if (!eventListenersRegistered) {
+      this.initEventListeners();
+      eventListenersRegistered = true;
+    }
 
-Így a kosárba tétel többször lefut egy kattintásra.
+    this.kosarDBElem = document.querySelector("#kosarDb");
+    this.kosarDbKiir();
+  }
+  // ... marad minden más
+}
+*******************************************************************
+Így meg a mennyiséget nem jeleniti meg jól nem változik a szám és csak ha ráfrissitek törli ki a kosárbol
+-Kattintasz + vagy - gombra → esemény lefut (modell frissül)
+-De a nézet (DOM) nem frissül → mennyiség nem változik
+-Csak frissítés (F5) után tűnik el/törlődik
+-Tehát: a Kosar példány megjelenit() függvénye nem fut le újra jól vagy hibásan van meghívva
+********************************************************************
+// Controller.js
 
+initKosar() {
+  const kosarLista = this.model.getKosarLista();
+
+  // Ha már van kosár példány, csak frissítjük
+  if (this.kosar) {
+    this.kosar.megjelenit(kosarLista);
+  } else {
+    this.kosar = new Kosar(kosarLista, this.szuloElem);
+  }
+
+  this.kosarDbKiir();
+}
+***********************************************************************
+Eseménykezelőnél:
+***********************************************************************
+window.addEventListener("novel", (event) => {
+  const id = event.detail;
+  this.model.increaseQuantity(id);
+  this.initKosar(); // új hívás
+});
+
+window.addEventListener("csokkent", (event) => {
+  const id = event.detail;
+  this.model.decreaseQuantity(id);
+  this.initKosar();
+});
+
+window.addEventListener("torles", (event) => {
+  const id = event.detail;
+  this.model.removeKosarItem(id);
+  this.initKosar();
+});
+************************************************************************
+Kosar megjelenit metodus ele kell:
+this.#szuloElem.innerHTML = "";
+
+atraktam konstruktorba a szures és rendezést mivel azt minden elemre akarom használni nemcsak egyszer
+
+
+
+
+
+//első
+  const tdElem = szELem.querySelector("tr:nth-child(1) td:nth-child(4)");
+  const tdMennyisegSzoveg = [...tdElem.childNodes] //A [...] szintaxissal átalakítjuk ezt a NodeList-et rendes tömbbé, hogy könnyen lehessen rá filter, map stb. műveleteket végezni.
+    .filter((node) => node.nodeType === Node.TEXT_NODE) //node szöveg, például az a 2, ami a két gomb között van
+    .map((node) => node.textContent.trim()) //kiolvassa a szöveget 
+    .filter((text) => text.length > 0)[0];
+  console.log("Első termék mennyisége:", tdMennyisegSzoveg);
+  console.assert(
+    tdMennyisegSzoveg == tesztLista[0].mennyiseg,
+    "Hiba: az első termék mennyisége nem jelenik meg helyesen"
+  );
+
+  // Második termék mennyisége
+  const tdElem2 = szELem.querySelector("tr:nth-child(2) td:nth-child(4)");
+  const tdMennyisegSzoveg2 = [...tdElem2.childNodes] //A [...] szintaxissal átalakítjuk ezt a NodeList-et rendes tömbbé, hogy könnyen lehessen rá filter, map stb. műveleteket végezni.
+    .filter((node) => node.nodeType === Node.TEXT_NODE) //node szöveg, például az a 2, ami a két gomb között van
+    .map((node) => node.textContent.trim()) //kiolvassa a szöveget 
+    .filter((text) => text.length > 0)[0];
+  console.log("Másodiktermék mennyisége:", tdMennyisegSzoveg2);
+  console.assert(
+    tdMennyisegSzoveg2 == tesztLista[1].mennyiseg,
+    "Hiba: a második termék mennyisége nem jelenik meg helyesen"
+  );
