@@ -182,5 +182,39 @@ function szuresTermekListaTeszt() {
   );
   console.log("szuresTermekListaTeszt() lefutott");
 }
-
 szuresTermekListaTeszt();
+
+function getKosarDarabszamTeszt() {
+  /* getKosarDarabszam(): Ellenőrizd, hogy a kosárban lévő összes termék
+  mennyiségét helyesen számolja-e ki. */
+  const modell = new Model();
+  const termek = {
+    id: 0,
+    nev: "Termék 1",
+    ar: 1000,
+    kep: "./kepek/placeholder.jpg",
+    leiras: "Ez egy példa termék leírása.",
+  };
+  const termek2 = {
+    id: 1,
+    nev: "Termék 2",
+    ar: 1300,
+    kep: "./kepek/placeholder.jpg",
+    leiras: "Ez egy példa termék leírása.",
+  };
+  modell.addKosar(termek);
+  modell.increaseQuantity(termek.id);
+  let osszesDB = modell.getKosarDarabszam();
+  console.assert(
+    osszesDB === 2,
+    `Hiba: a kosár össz darabszáma nem 2, hanem ${osszesDB}`
+  );
+  modell.addKosar(termek2);
+  osszesDB = modell.getKosarDarabszam();
+  console.assert(
+    osszesDB === 3,
+    `Hiba: a kosár össz darabszáma nem 3, hanem ${osszesDB}`
+  );
+  console.log("getKosarDarabszamTeszt() lefutott");
+}
+getKosarDarabszamTeszt();
